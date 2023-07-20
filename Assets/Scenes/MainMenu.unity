@@ -507,11 +507,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8004358366500705589, guid: f36128f8af5bfa2409ae4b127f4b1fa1, type: 3}
       propertyPath: m_text
-      value: TZ_Susidko_Davyd\n\nBall shooter
+      value: 'CampStudio
+
+        Zombopleb'
       objectReference: {fileID: 0}
     - target: {fileID: 8004358366500705589, guid: f36128f8af5bfa2409ae4b127f4b1fa1, type: 3}
       propertyPath: m_fontSize
-      value: 71.25
+      value: 72
       objectReference: {fileID: 0}
     - target: {fileID: 8004358366500705589, guid: f36128f8af5bfa2409ae4b127f4b1fa1, type: 3}
       propertyPath: m_HorizontalAlignment

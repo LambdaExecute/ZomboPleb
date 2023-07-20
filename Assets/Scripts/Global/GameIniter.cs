@@ -4,12 +4,12 @@ public class GameIniter : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private GameObject barrierPrefab;
+    [SerializeField] private GameObject zombiePrefab;
     [Space]
     [SerializeField] private Transform playerStartPosition;
     [SerializeField] private Transform playerTarget;
     [Space]
-    [SerializeField] private BarrierGenerator barrierGenerator;
+    [SerializeField] private ZombieGenerator zombieGenerator;
     [SerializeField] private WindowsManager windowsManager;
     [SerializeField] private FinalDoor finalDoor;
     [SerializeField] private Camera camera;
@@ -25,11 +25,11 @@ public class GameIniter : MonoBehaviour
     {
         camera.gameObject.SetActive(false);
         PlayerUI playerUI = windowsManager.Open(WindowType.PlayerUI) as PlayerUI;
-        barrierGenerator.Init(barrierPrefab);
         playerObject = Instantiate(playerPrefab, playerStartPosition);
         Player player = playerObject.GetComponent<Player>();
         player.Init(playerUI, playerTarget, bulletPrefab);
         player.StartMoving();
+        zombieGenerator.Init(zombiePrefab);
 
         player.onDead.AddListener(GameLose);
         player.onWin.AddListener(GameWin);
@@ -39,7 +39,7 @@ public class GameIniter : MonoBehaviour
     {
         windowsManager.CloseAll();
         windowsManager.Open(WindowType.GameOver, new MessageBox("You win! Well done!")).GetComponent<GameOver>().onRetry.AddListener(RetryGame);
-        finalDoor.Open();
+        //finalDoor.Open();
     }
 
     private void GameLose()
@@ -55,8 +55,8 @@ public class GameIniter : MonoBehaviour
             Destroy(playerObject);
         windowsManager.CloseAll();
 
-        finalDoor.Close();
-        barrierGenerator.ClearBarriers();
+        //finalDoor.Close();
+        zombieGenerator.ClearZombies();
         StartGame();
     }
 }

@@ -8,6 +8,6 @@ public class MainMenu : Window
 
     private void Start()
     {
-        startGame.onClick.AddListener(() => SceneManager.LoadScene("Game"));
+        startGame.onClick.AddListener(() => SceneManager.LoadScene("PizzaPlace"));
     }
 }

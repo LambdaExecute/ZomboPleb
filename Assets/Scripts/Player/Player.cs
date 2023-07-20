@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     public bool isSizeCritical { get => transform.localScale.x <= criticalAxis; }
 
     private int distanceToTarget = 8;
-    private int playerAcceleration = 6;
+    private int playerAcceleration = 2;
 
     private float bulletMinSize = 0.4f;
     private float criticalAxis { get => bulletMinSize * 0.15f; }
@@ -112,7 +112,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.TryGetComponent(out Barrier barrier))
+        if (collision.gameObject.TryGetComponent(out Zombie zombie))
             Lose();
     }
 }

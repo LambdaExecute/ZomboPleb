@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4322998844437734489}
   - component: {fileID: 7117888851421433622}
   - component: {fileID: 2256055754349754077}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,6 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57ea60c5d395e1945be2c8473c76dc49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actionRadius: {fileID: 0}
 --- !u!96 &2256055754349754077
 TrailRenderer:
   serializedVersion: 2
