@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class Zombie : MonoBehaviour
@@ -18,7 +17,7 @@ public class Zombie : MonoBehaviour
 
     public void Init(List<GameObject> zombiesModels, int modelID)
     {
-        List<AnimatorController> zombieAnimations = Resources.LoadAll<AnimatorController>("Prefabs/ZombieAnimations").ToList();
+        List<RuntimeAnimatorController> zombieAnimations = Resources.LoadAll<RuntimeAnimatorController>("Prefabs/ZombieAnimations").ToList();
         transform = GetComponent<Transform>();
         GameObject zombieModel = Instantiate(zombiesModels[modelID], transform.position, Quaternion.identity);
         allRigidbodies = zombieModel.GetComponentsInChildren<Rigidbody>();
@@ -71,6 +70,7 @@ public class Zombie : MonoBehaviour
     private IEnumerator IWaitForDestroyPhyisics()
     {
         yield return new WaitForSecondsRealtime(4);
+        yield return new WaitUntil(() => transform.position.y <= 0.5f);
         SetPhyisical(false);
     }
 }

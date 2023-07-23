@@ -12120,10 +12120,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zombieSpawnField:
-    m_Center: {x: 10, y: 2.6, z: 53.3}
-    m_Extent: {x: 15, y: 2.5, z: 36.76}
+    m_Center: {x: 10, y: 2.6, z: 50}
+    m_Extent: {x: 1, y: 2.5, z: 15}
   zombiesRotation: {x: 0, y: 90, z: 0}
-  zombieCount: 500
+  zombieCount: 20
   minDistanceBetweenPositions: 0.5
 --- !u!1 &1137093164
 GameObject:
