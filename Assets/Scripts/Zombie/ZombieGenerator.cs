@@ -63,6 +63,7 @@ public class ZombieGenerator : MonoBehaviour
                 return;
             }
         }
+        Instantiate(Resources.Load<GameObject>("Prefabs/DeadZone")).GetComponent<DeadZone>().Init(zombieSpawnField);
     }
 
     private bool IsPositionValid(Vector3 targetPosition)

@@ -18,12 +18,22 @@ public class BulletParticles : MonoBehaviour
         burst.count = countOfParticles;
         particleSystem.emission.SetBurst(0, burst);
         particleSystem.Play();
-        yield return new WaitForSecondsRealtime(particleSystem.main.duration);
+        yield return new WaitForSecondsRealtime(particleSystem.main.startLifetime.constant / 10);
         Destroy(gameObject);
     }
 
     private void OnParticleCollision(GameObject other)
     {
-        Debug.Log(other.name);
+        Zombie zombie = other.GetComponent<Zombie>();
+        if(zombie == null)
+        {
+            zombie = GetComponentInParent<Zombie>();
+            if (zombie == null) return;
+        }
+
+        if (!zombie.isDead)
+            zombie.KillByParticleHit();
+        else
+            zombie.VisualInfect();
     }
 }

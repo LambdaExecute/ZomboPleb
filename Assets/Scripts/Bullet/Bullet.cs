@@ -1,50 +1,39 @@
 using System.Collections;
 using System.Linq;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public abstract class Bullet : MonoBehaviour
 {
-    private int lifeTime = 1;
-    private float speed = 50;
-    private int explousionMultiplier = 10;
-    private int minParticlesCount = 5;
+    [SerializeField] protected int lifeTime;
+    [SerializeField] protected float speed;
+    [SerializeField] protected int explousionMultiplier;
+    [SerializeField] protected float damage;
 
-    public float radius => transform.localScale.x * 0.5f;
+    public virtual float radius => transform.localScale.x * 0.5f;
+    protected virtual float fragmentRadius => radius >= 0.5f ? 0.3f : radius / 2;
     
-    private new Rigidbody rigidbody;
-    private new Transform transform;
-    private TrailRenderer trailRenderer;
-    private GameObject bulletParticles;
+    protected new Rigidbody rigidbody;
+    protected new Transform transform;
+    protected TrailRenderer trailRenderer;
 
-    public void Init(float size)
+    public virtual void Init(float size)
     {
         rigidbody = GetComponent<Rigidbody>();
         transform = GetComponent<Transform>();
         trailRenderer = GetComponent<TrailRenderer>();
-        bulletParticles = Resources.Load<GameObject>("Prefabs/BulletParticles");
-
+        
         transform.localScale = new Vector3(size, size, size);
         trailRenderer.startWidth = size;
-        rigidbody.velocity = Vector3.forward * speed;
 
         Destroy(gameObject, lifeTime);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public virtual void Init(Vector3 toTarget)
     {
-        if(collision.gameObject.TryGetComponent(out Zombie targetZombie))
-        {
-            Collider[] nearestColliders = Physics.OverlapSphere(transform.localPosition, radius * explousionMultiplier * 2).Where(c => c.GetComponent<Zombie>() != null).ToArray();
-            Zombie[] nearestZombies = nearestColliders.ToList().Select(c => c.GetComponent<Zombie>()).ToArray();
+        rigidbody = GetComponent<Rigidbody>();
+        transform = GetComponent<Transform>();
+        trailRenderer = GetComponent<TrailRenderer>();
 
-            foreach (Zombie zombie in nearestZombies)
-            {
-                zombie.Kill();
-                zombie.spine.AddExplosionForce(5000 + 25000 * radius, transform.position, radius * explousionMultiplier);
-            }
-            Instantiate(bulletParticles, transform.position, Quaternion.identity).GetComponent<BulletParticles>().Init(minParticlesCount + Mathf.RoundToInt(radius * 2 * Random.Range(4, 10)));
-            Destroy(gameObject);
-        }
+        Destroy(gameObject, lifeTime);
     }
 }

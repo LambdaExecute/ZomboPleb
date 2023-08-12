@@ -25,7 +25,7 @@ public class GameIniter : MonoBehaviour
     {
         camera.gameObject.SetActive(false);
         PlayerUI playerUI = windowsManager.Open(WindowType.PlayerUI) as PlayerUI;
-        playerObject = Instantiate(playerPrefab, playerStartPosition);
+        playerObject = Instantiate(playerPrefab, playerStartPosition.position, Quaternion.identity);
         Player player = playerObject.GetComponent<Player>();
         player.Init(playerUI, playerTarget, bulletPrefab);
         player.StartMoving();

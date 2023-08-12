@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.17529964, g: 0.19105832, b: 0.1099219, a: 1}
+  m_IndirectSpecularColor: {r: 0.17525521, g: 0.19103262, b: 0.10988579, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &4
 LightmapSettings:
@@ -198,7 +198,7 @@ Transform:
   - {fileID: 703137963}
   - {fileID: 1504455022}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!4 &523
 Transform:
@@ -224,7 +224,7 @@ Transform:
   - {fileID: 1853596300}
   - {fileID: 2131984633}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!4 &524
 Transform:
@@ -338,7 +338,7 @@ Transform:
   - {fileID: 460708513}
   - {fileID: 1327187802}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!196 &1192
 NavMeshSettings:
@@ -4066,7 +4066,7 @@ Transform:
   - {fileID: 626310211}
   - {fileID: 1637111782}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &426368543
 PrefabInstance:
@@ -5618,12 +5618,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 526923205}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.87, y: 5.19, z: -12.5}
+  m_LocalPosition: {x: 10, y: 0.62, z: -12.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &532069879 stripped
 Transform:
@@ -11565,7 +11565,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: -236.949, y: -579.194, z: -448.701}
 --- !u!4 &1069721818 stripped
 Transform:
@@ -12120,10 +12120,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zombieSpawnField:
-    m_Center: {x: 10, y: 2.6, z: 50}
-    m_Extent: {x: 1, y: 2.5, z: 15}
+    m_Center: {x: 10, y: 2.6, z: 27.1}
+    m_Extent: {x: 3, y: 2.5, z: 16.92}
   zombiesRotation: {x: 0, y: 90, z: 0}
-  zombieCount: 20
+  zombieCount: 30
   minDistanceBetweenPositions: 0.5
 --- !u!1 &1137093164
 GameObject:
@@ -14011,7 +14011,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1303079378
 GameObject:
@@ -15149,7 +15149,7 @@ Transform:
   - {fileID: 1758490542}
   - {fileID: 1115164678}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1379851948
 GameObject:
@@ -16266,14 +16266,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1497975267}
-  m_LocalRotation: {x: 0.22249965, y: -0, z: -0, w: 0.9749328}
-  m_LocalPosition: {x: -0.029999733, y: 11.72, z: -17.79}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10.34, y: 11.99, z: 7.9800344}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
-  m_LocalEulerAnglesHint: {x: 25.712, y: 0, z: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1504455021
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16711,7 +16711,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -16815,7 +16815,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1576383744
 GameObject:

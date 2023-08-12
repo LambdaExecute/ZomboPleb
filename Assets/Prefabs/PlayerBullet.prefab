@@ -13,10 +13,10 @@ GameObject:
   - component: {fileID: 2833574461923859276}
   - component: {fileID: 2833574461923859277}
   - component: {fileID: 4322998844437734489}
-  - component: {fileID: 7117888851421433622}
   - component: {fileID: 2256055754349754077}
+  - component: {fileID: 4145877007628179969}
   m_Layer: 7
-  m_Name: Bullet
+  m_Name: PlayerBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d7fd8fc5fd8f4eb429472457510947f5, type: 2}
+  - {fileID: 2100000, guid: d8633e75a559c45c99548d2e874f970e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -116,19 +116,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &7117888851421433622
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2833574461923859278}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57ea60c5d395e1945be2c8473c76dc49, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  particleSystem: {fileID: 0}
 --- !u!96 &2256055754349754077
 TrailRenderer:
   serializedVersion: 2
@@ -237,3 +224,19 @@ TrailRenderer:
   m_MinVertexDistance: 1
   m_Autodestruct: 0
   m_Emitting: 1
+--- !u!114 &4145877007628179969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2833574461923859278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 725b97dcf705741959cbfd3b376cb81a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifeTime: 1
+  speed: 50
+  explousionMultiplier: 8
+  damage: 0
