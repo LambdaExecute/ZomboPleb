@@ -23,11 +23,12 @@ public class Player : MonoBehaviour
     private Transform target;
     private PlayerUI playerUI;
 
+    private bool isDead = false;
     private bool isDown = false;
 
     private PlayerBullet playerBullet;
 
-    [Min(1)]
+    [Min(0)]
     [SerializeField] private int playerAcceleration = 4;
     [SerializeField] private GameObject bulletSpawnPoint;
 
@@ -43,6 +44,7 @@ public class Player : MonoBehaviour
 
     public void Lose()
     {
+        isDead = true;
         StopAllCoroutines();
         onDead.Invoke();
         Destroy(gameObject);
@@ -136,7 +138,7 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
-        if (collision.gameObject.TryGetComponent(out DeadZone zombie))
+        if (collision.gameObject.TryGetComponent(out DeadZone zombie) && !isDead)
             Lose();
     }
 }

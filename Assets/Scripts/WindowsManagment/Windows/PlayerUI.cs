@@ -8,6 +8,12 @@ public class PlayerUI : Window
     [SerializeField] private TMP_Text countOfShotsField;
     [SerializeField] private TMP_Text fpsCount;
 
+    public override void Show(WindowsManager windowsManager, object data)
+    {
+        base.Show(windowsManager, data);
+        powerScale.fillAmount = 0;
+    }
+
     public void UpdateScale(float currentBulletSize, float currentPlayerSize)
     {
         powerScale.fillAmount = currentBulletSize / currentPlayerSize;

@@ -13,36 +13,62 @@ public class Zombie : MonoBehaviour
     private Animator zombieAnimator;
 
     private float currentAnimationSpeed;
+    private int currentZombieIndex;
+    
+    private Vector3 currentZombieScale;
+
     private RuntimeAnimatorController currentAnimation;
+    private GameObject zombieModel;
 
     public bool isDead => health == 0;
-    private Rigidbody[] allRigidbodies;
-    public Rigidbody spine { get; private set; }
+
+    public LODGroup lodGroup { get; private set; }
+    public PhysicalZombie physicalBody { get; private set; }
 
     public void Init(List<GameObject> zombiesModels, int modelID)
     {
+        currentZombieIndex = modelID;
         transform = GetComponent<Transform>();
         List<RuntimeAnimatorController> zombieAnimations = Resources.LoadAll<RuntimeAnimatorController>("Prefabs/ZombieAnimations").ToList();
         zombieAnimations.Remove(zombieAnimations.Find(za => za.name == "Zombie@Damages"));
-        GameObject zombieModel = Instantiate(zombiesModels[modelID], transform.position, Quaternion.identity);
-        allRigidbodies = zombieModel.GetComponentsInChildren<Rigidbody>();
-        foreach(Rigidbody rigidbody in allRigidbodies)
-        {
-            rigidbody.gameObject.layer = 8;
-        }
 
+        zombieModel = Instantiate(zombiesModels[modelID], transform.position, Quaternion.identity);
+        
         zombieAnimator = zombieModel.GetComponent<Animator>();
         zombieAnimator.runtimeAnimatorController = zombieAnimations[Random.Range(0, zombieAnimations.Count)];
-        StartCoroutine(IWaitForStartAnimation());
-        SetPhysical(false);
+        currentAnimation = zombieAnimator.runtimeAnimatorController;
 
+        StartCoroutine(IWaitForStartAnimation());
+        
         float randomScale = Random.Range(minScale, maxScale);
 
         zombieModel.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
         zombieModel.transform.parent = transform;
         zombieModel.transform.localPosition = Vector3.zero;
+        currentZombieScale = zombieModel.transform.localScale;
+        lodGroup = zombieAnimator.gameObject.GetComponent<LODGroup>();
+        
+        if(Random.Range(0, 100) <= 50)
+        {
+            LOD[] currentLODS = lodGroup.GetLODs();
+            List<LOD> lodsList = currentLODS.ToList();
+            LOD newSecondLOD = lodsList[lodsList.Count - 1];
+            newSecondLOD.screenRelativeTransitionHeight = 0.2f;
+            lodsList[lodsList.Count - 1] = newSecondLOD;
+            
+            lodGroup.SetLODs(lodsList.ToArray());
+        }
+        StartCoroutine(ISetAnimator());
+    }
 
-        spine = GetComponentInChildren<ZombieSpine>().GetComponent<Rigidbody>();
+    private IEnumerator ISetAnimator()
+    {
+        while(!isDead)
+        {
+            yield return new WaitForSecondsRealtime(0.5f);
+            if(zombieAnimator != null && lodGroup != null)
+                zombieAnimator.enabled = lodGroup.GetLODs()[0].renderers[0].isVisible;
+        }
     }
 
     private IEnumerator IWaitForStartAnimation()
@@ -52,16 +78,6 @@ public class Zombie : MonoBehaviour
         zombieAnimator.SetTrigger("Animate");
         zombieAnimator.speed = Random.Range(0.25f, 2);
         currentAnimationSpeed = zombieAnimator.speed;
-    }
-
-    private void SetPhysical(bool isKinematic)
-    {
-        if (isKinematic)
-            Destroy(zombieAnimator);
-        foreach(Rigidbody rigidbody in allRigidbodies)
-        {
-            rigidbody.isKinematic = !isKinematic;
-        }
     }
 
     public void TakeDamage(float damage)
@@ -74,20 +90,24 @@ public class Zombie : MonoBehaviour
             Kill();
     }
 
-    public void Kill()
+    public void Kill(bool isInfected = false)
     {
         health = 0;
+        
+        Destroy(zombieModel);
+        
+        physicalBody = Instantiate(Resources.Load<GameObject>("Prefabs/Zombies/Zombie0/ZombiePhysical"), transform.position, transform.localRotation).GetComponent<PhysicalZombie>();
+        physicalBody.Init();
+
+        physicalBody.transform.parent = transform;
+        physicalBody.transform.localPosition = Vector3.zero;
+        physicalBody.transform.localScale = currentZombieScale;
+
         Destroy(GetComponent<Collider>());
         Destroy(GetComponent<Rigidbody>());
-        SetPhysical(true);
-        StartCoroutine(IWaitForDestroyPhyisics());
-    }
 
-    private IEnumerator IWaitForDestroyPhyisics()
-    {
-        yield return new WaitForSecondsRealtime(4);
-        yield return new WaitUntil(() => transform.position.y <= 0.5f);
-        SetPhysical(false);
+        if (isInfected)
+            VisualInfect(physicalBody.gameObject);
     }
 
     public void KillByParticleHit()
@@ -97,16 +117,16 @@ public class Zombie : MonoBehaviour
 
     private IEnumerator IKillByParticleHit()
     {
-        VisualInfect();
+        VisualInfect(gameObject);
         zombieAnimator.speed = 1;
         zombieAnimator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("Prefabs/ZombieAnimations/Zombie@Damages");
         yield return new WaitForSeconds(2f);
-        Kill();
+        Kill(true);
     }
 
-    public void VisualInfect()
+    public void VisualInfect(GameObject target)
     {
-        SkinnedMeshRenderer meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+        SkinnedMeshRenderer meshRenderer = target.GetComponentInChildren<SkinnedMeshRenderer>();
         Material[] materials = new Material[2];
         materials[0] = meshRenderer.materials[0];
         materials[1] = Resources.Load<Material>("Prefabs/ZombieInfectedMaterial");

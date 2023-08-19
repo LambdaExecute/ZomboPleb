@@ -199,7 +199,7 @@ MonoBehaviour:
   onWin:
     m_PersistentCalls:
       m_Calls: []
-  playerAcceleration: 4
+  playerAcceleration: 2
   bulletSpawnPoint: {fileID: 804684781}
 --- !u!1001 &2199708205789364117
 PrefabInstance:

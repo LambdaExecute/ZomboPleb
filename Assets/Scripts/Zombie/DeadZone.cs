@@ -23,7 +23,7 @@ public class DeadZone : MonoBehaviour
         while (zombieSpawnField.Contains(transform.position))
         {
             yield return null;
-            transform.position += Vector3.forward * Time.deltaTime * 5;
+            transform.position += Vector3.forward * Time.deltaTime;
         }
         Destroy(gameObject);
     }

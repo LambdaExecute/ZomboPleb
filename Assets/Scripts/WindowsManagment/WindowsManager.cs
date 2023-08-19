@@ -10,6 +10,8 @@ public class WindowsManager : MonoBehaviour
 
     private List<Window> _openedWindows = new List<Window>();
 
+    private void Start() => DontDestroyOnLoad(canvas);
+
     public Window Open(WindowType windowType, object data = null)
     {
         GameObject windowObject = Instantiate(Resources.Load("Windows/" + windowType.ToString()), canvas.transform) as GameObject;
@@ -21,7 +23,21 @@ public class WindowsManager : MonoBehaviour
 
     public void CloseAll()
     {
-        while(openedWindows.Count != 0)
-            openedWindows[0].Close();
+        while(_openedWindows.Count != 0)
+            _openedWindows[0].Close();
+    }
+
+    public void CloseAllExcept(Window window)
+    {
+        _openedWindows.Remove(window);
+        CloseAll();
+        _openedWindows.Add(window);
+    }
+
+    public void Close(Window window)
+    {
+        Window target = _openedWindows.Find(w => window);
+        if (target != null)
+            target.Close();
     }
 }

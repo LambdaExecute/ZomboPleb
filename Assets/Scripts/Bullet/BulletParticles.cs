@@ -34,6 +34,6 @@ public class BulletParticles : MonoBehaviour
         if (!zombie.isDead)
             zombie.KillByParticleHit();
         else
-            zombie.VisualInfect();
+            zombie.VisualInfect(zombie.gameObject);
     }
 }

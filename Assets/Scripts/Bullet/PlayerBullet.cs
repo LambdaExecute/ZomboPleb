@@ -22,7 +22,8 @@ public class PlayerBullet : Bullet
         foreach (Zombie zombie in nearestZombies)
         {
             zombie.Kill();
-            zombie.spine.AddExplosionForce(5000 + 25000 * radius, transform.position, radius * explousionMultiplier);
+            zombie.physicalBody.spine.AddExplosionForce(5000 + 25000 * radius, transform.position, radius * explousionMultiplier);
+            zombie.physicalBody.DestroyPhysicsWithDelay();
         }
 
         float bulletSurfaceArea = 4 * Mathf.PI * Mathf.Pow(radius, 2);

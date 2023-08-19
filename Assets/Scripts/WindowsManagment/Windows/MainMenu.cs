@@ -5,9 +5,20 @@ using UnityEngine.SceneManagement;
 public class MainMenu : Window
 {
     [SerializeField] private Button startGame;
-
+    [SerializeField] private Button quitButton;
+    
     private void Start()
     {
-        startGame.onClick.AddListener(() => SceneManager.LoadScene("PizzaPlace"));
+        windowsManager = FindObjectOfType<WindowsManager>();
+        startGame.onClick.AddListener(StartGame);
+        quitButton.onClick.AddListener(() => Application.Quit());
+    }
+
+    private void StartGame()
+    {
+        (windowsManager.Open(WindowType.LoadingScreen) as LoadingScreen).onScreenShowed.AddListener(() => { 
+            SceneManager.LoadScene("PizzaPlace");
+            Close();
+        });
     }
 }

@@ -1,5 +1,6 @@
 public enum WindowType
 {
     PlayerUI,
-    GameOver
+    GameOver,
+    LoadingScreen
 }
