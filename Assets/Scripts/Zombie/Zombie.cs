@@ -53,7 +53,7 @@ public class Zombie : MonoBehaviour
             LOD[] currentLODS = lodGroup.GetLODs();
             List<LOD> lodsList = currentLODS.ToList();
             LOD newSecondLOD = lodsList[lodsList.Count - 1];
-            newSecondLOD.screenRelativeTransitionHeight = 0.2f;
+            newSecondLOD.screenRelativeTransitionHeight = 0.01f;
             lodsList[lodsList.Count - 1] = newSecondLOD;
             
             lodGroup.SetLODs(lodsList.ToArray());

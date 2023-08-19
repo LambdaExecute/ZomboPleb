@@ -523,7 +523,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 8950947897166563805, guid: 0112b3ddf6b69f148b600356eb9c21a3, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 6b192f8bd09e0e64f8b95a1cc25567ea, type: 2}
   m_Bones:
   - {fileID: 5115990258376195083}
   - {fileID: 7024522128833635598}
@@ -718,7 +718,7 @@ LODGroup:
   m_AnimateCrossFading: 0
   m_LastLODIsBillboard: 0
   m_LODs:
-  - screenRelativeHeight: 0.25011486
+  - screenRelativeHeight: 0.03865443
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 4194041877747473532}
