@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 
 public class Soldier : MonoBehaviour
 {
@@ -11,6 +10,7 @@ public class Soldier : MonoBehaviour
     [SerializeField] private float maxDistance;
     [SerializeField] private float minDistance;
     [SerializeField] private float acceleration;
+    [SerializeField] private float soldierLifeTime;
     [Header("Count of shots per second.")]
     [Min(1)]
     [SerializeField] private float shotsPerSec = 1;
@@ -20,114 +20,156 @@ public class Soldier : MonoBehaviour
     private Animator animator;
     private List<Zombie> zombies = new List<Zombie>();
     private new Transform transform;
+
     private Zombie target;
+
     private Zombie[] nearestZombies;
     private GameObject soldierBulletPrefab;
 
-    private bool isDead = false;
-    private int aimingLayerID = 2;
+    private Coroutine moving;
+    private Coroutine findTargetMachine;
+    private Coroutine shooting;
 
-    private bool isTargetInFov => Vector3.Angle(target.transform.position - transform.position, transform.forward) <= fov;
-    private bool isMoving;
-
-    private void Start()
-    {
-        soldierBulletPrefab = Resources.Load<GameObject>("Prefabs/SoldierBullet");
-
-        transform = GetComponent<Transform>();
-        animator = GetComponent<Animator>();
-    }
+    private bool isMoving = false;
+    private bool isTargetInFov => Vector3.Angle(transform.forward, target.transform.position - transform.position) <= fov;
 
     public void StartMoving()
     {
-        zombies = FindObjectsOfType<Zombie>().ToList();
-        StartCoroutine(IShootMachine());
-        StartCoroutine(IMove());
+        moving = StartCoroutine(IMove());
+        StartCoroutine(ILiveStatusMachine());
+    }
+
+    public void StopMoving()
+    {
+        isMoving = false;
+        animator.SetTrigger("Idle");
+        if (moving != null)
+        {
+            StopCoroutine(moving);
+            moving = null;
+        }
+    }
+
+    public void StartFindingTarget() => findTargetMachine = StartCoroutine(IFindTargetMachine());
+
+    private void Start()
+    {
+        transform = GetComponent<Transform>();
+        animator = GetComponent<Animator>();
+        soldierBulletPrefab = Resources.Load<GameObject>("Prefabs/SoldierBullet");
     }
 
     private IEnumerator IMove()
     {
         isMoving = true;
         animator.SetTrigger("Run");
-        transform.rotation = Quaternion.identity;
-        while (isMoving)
+        while(true)
         {
             yield return null;
             transform.position += Vector3.forward * acceleration * Time.deltaTime;
         }
-        animator.SetTrigger("Idle");
     }
 
-    private IEnumerator IShootMachine()
+    private IEnumerator IFindTargetMachine()
     {
+        zombies = FindObjectsOfType<Zombie>().ToList();
         while (true)
         {
             while (target == null)
             {
+                StopShooting();
                 yield return null;
-                
+
                 nearestZombies = zombies.FindAll(z => Vector3.Distance(z.transform.position, transform.position) <= maxDistance && !z.isDead).ToArray();
+                target = GetNearestZombie();
 
-                if (nearestZombies.Length > 0)
+                if (target != null)
                 {
-                    target = GetNearestZombie();
-
-                    if (Vector3.Distance(target.transform.position, transform.position) < minDistance)
-                    {
-                        isMoving = false;
-                        transform.LookAt(target.transform.position);
-                    }
-                    else if (isMoving && !isTargetInFov)
+                    if (!isTargetInFov)
                     {
                         zombies.Remove(target);
                         target = null;
                     }
+                    else
+                        StartShooting(target);
                 }
             }
-            
-            for(float i = 0; i <= 1; i += Time.deltaTime * 4)
-            {
-                yield return null;
-                animator.SetLayerWeight(aimingLayerID, i);
-            }
-            
-            animator.SetLayerWeight(aimingLayerID, 1);
-            StartCoroutine(IShooting());
 
-            yield return new WaitUntil(() => target == null);
+            yield return null;
+
+            if (target != null)
+            {
+                if (!isTargetInFov)
+                {
+                    zombies.Remove(target);
+                    target = null;
+                }
+            }
+
+            if (Vector3.Distance(GetNearestZombie().transform.position, transform.position) <= minDistance)
+                StopMoving();
+            else if (!isMoving)
+                StartMoving();
         }
     }
 
-    private IEnumerator IShooting()
+    private void StartShooting(Zombie target)
     {
-        while (target != null)
+        animator.SetLayerWeight(2, 1);
+        shooting = StartCoroutine(IShooting(target));
+    }
+
+    private void StopShooting()
+    {
+        animator.SetLayerWeight(2, 0);
+        if (shooting != null)
         {
-            if (target.isDead)
-            {
-                for (float i = 1; i >= 0; i -= Time.deltaTime * 4)
-                {
-                    yield return null;
-                    animator.SetLayerWeight(aimingLayerID, i);
-                }
-                animator.SetLayerWeight(aimingLayerID, 0);
+            StopCoroutine(shooting);
+            shooting = null;
+        }
+    }
 
-                zombies.Remove(target);
-                target = null;
-                StartCoroutine(IMove());
-
-                break;
-            }
-
+    private IEnumerator IShooting(Zombie target)
+    {
+        while (!target.isDead)
+        {
             yield return new WaitForSecondsRealtime(1 / shotsPerSec);
 
-            Instantiate(soldierBulletPrefab, bulletSpawnPoint.position, Quaternion.identity)
-                   .GetComponent<SoldierBullet>()
-                   .Init(target.transform.position - transform.position);
+            GameObject bullet = Instantiate(soldierBulletPrefab, bulletSpawnPoint.transform.position, Quaternion.identity);
+            bullet.GetComponent<SoldierBullet>().Init(target.transform.position - bullet.transform.position);
         }
+        animator.SetLayerWeight(2, 0);
+        zombies.Remove(target);
+        this.target = null;
+    }
+
+    private IEnumerator ILiveStatusMachine()
+    {
+        yield return null;
+        while(true)
+        {
+            yield return new WaitUntil(() => !isMoving);
+            while(!isMoving)
+            {
+                Debug.Log("fff");
+                yield return null;
+                soldierLifeTime -= Time.deltaTime / 10;
+
+                if (soldierLifeTime <= 0)
+                    goto death;
+            }
+            yield return null;
+        }
+    death:
+        StopAllCoroutines();
+        Destroy(gameObject);
     }
 
     private Zombie GetNearestZombie()
     {
+        if (nearestZombies.Length == 0)
+            return null;
+
         Zombie nearestZombie = nearestZombies.First();
         float minDistance = maxDistance;
         foreach (Zombie currentZombie in nearestZombies)

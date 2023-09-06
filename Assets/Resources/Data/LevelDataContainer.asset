@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: LevelDataContainer
   m_EditorClassIdentifier: 
   levels:
-  - zombieFieldDepth: 10
-    zombieDensity: 1
+  - zombieFieldDepth: 20
+    zombieDensity: 2
     playerMass: 500
-    countOfSoldiers: 1
+    countOfSoldiers: 6
     distanceToZombies: 25
     distanceFromZombiesToTarget: 15

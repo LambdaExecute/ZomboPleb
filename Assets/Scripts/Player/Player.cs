@@ -39,6 +39,9 @@ public class Player : MonoBehaviour
 
     public void Init(int playerMass, PlayerUI playerUI, Transform target, GameObject bullet)
     {
+        foreach (Transform soldierPos in _soldiersPositions)
+            soldierPos.parent = null;
+
         this.playerMass = playerMass;
         this.target = target;
         this.bullet = bullet;

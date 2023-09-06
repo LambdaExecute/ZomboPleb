@@ -55,7 +55,10 @@ public class GameIniter : MonoBehaviour
             FindObjectOfType<LoadingScreen>().Close();
             player.StartMoving();
             foreach(Soldier soldier in soldiers)
+            {
                 soldier.StartMoving();
+                soldier.StartFindingTarget();
+            }
         });
     }
         

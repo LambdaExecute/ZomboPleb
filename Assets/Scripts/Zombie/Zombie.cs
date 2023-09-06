@@ -157,4 +157,9 @@ public class Zombie : MonoBehaviour
             }
         }
     }
+
+    internal List<Zombie> ToList()
+    {
+        throw new System.NotImplementedException();
+    }
 }
