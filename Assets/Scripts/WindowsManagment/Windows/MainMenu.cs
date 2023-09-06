@@ -12,6 +12,7 @@ public class MainMenu : Window
         windowsManager = FindObjectOfType<WindowsManager>();
         startGame.onClick.AddListener(StartGame);
         quitButton.onClick.AddListener(() => Application.Quit());
+        LevelManager.Init();
     }
 
     private void StartGame()

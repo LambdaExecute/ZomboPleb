@@ -9,6 +9,7 @@ public abstract class Bullet : MonoBehaviour
     [SerializeField] protected int explousionMultiplier;
     [SerializeField] protected float damage;
 
+    private float bulletDefaultMass = 20;
     public virtual float radius => transform.localScale.x * 0.5f;
     protected virtual float fragmentRadius => radius >= 0.5f ? 0.3f : radius / 2;
     
@@ -16,14 +17,14 @@ public abstract class Bullet : MonoBehaviour
     protected new Transform transform;
     protected TrailRenderer trailRenderer;
 
-    public virtual void Init(float size)
+    public virtual void Init(float mass)
     {
         rigidbody = GetComponent<Rigidbody>();
         transform = GetComponent<Transform>();
         trailRenderer = GetComponent<TrailRenderer>();
         
-        transform.localScale = new Vector3(size, size, size);
-        trailRenderer.startWidth = size;
+        UpdateVizualSize(mass);
+        trailRenderer.startWidth = transform.localScale.x;
 
         Destroy(gameObject, lifeTime);
     }
@@ -35,5 +36,11 @@ public abstract class Bullet : MonoBehaviour
         trailRenderer = GetComponent<TrailRenderer>();
 
         Destroy(gameObject, lifeTime);
+    }
+
+    private void UpdateVizualSize(float mass)
+    {
+        float size = (mass / bulletDefaultMass) * 0.6f;
+        transform.localScale = new Vector3(size, size, size);
     }
 }

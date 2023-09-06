@@ -16,22 +16,22 @@ public class PlayerBullet : Bullet
 
     public void Explode(bool isClicked = false)
     {
-        Collider[] nearestColliders = Physics.OverlapSphere(transform.localPosition, radius * explousionMultiplier).Where(c => c.GetComponent<Zombie>() != null).ToArray();
+        Collider[] nearestColliders = Physics.OverlapSphere(transform.position, 2 + Mathf.CeilToInt(radius * Mathf.PI)).Where(c => c.GetComponent<Zombie>() != null).ToArray();
         Zombie[] nearestZombies = nearestColliders.ToList().Select(c => c.GetComponent<Zombie>()).ToArray();
 
         foreach (Zombie zombie in nearestZombies)
         {
             zombie.Kill();
-            zombie.physicalBody.spine.AddExplosionForce(5000 + 25000 * radius, transform.position, radius * explousionMultiplier);
+            zombie.physicalBody.spine.AddExplosionForce(Mathf.Pow(4/3 * Mathf.PI * Mathf.Pow(radius, 3), 2) * 50 + 10000, transform.position, 10);
             zombie.physicalBody.DestroyPhysicsWithDelay();
         }
-
+        
         float bulletSurfaceArea = 4 * Mathf.PI * Mathf.Pow(radius, 2);
         float bulletFragmentSurfaceArea = 4 * Mathf.PI * Mathf.Pow(fragmentRadius, 2);
 
         Instantiate(bulletParticles, transform.position, isClicked ? Quaternion.Euler(-40, 0, 0) : Quaternion.Euler(-90, 0, 0))
                 .GetComponent<BulletParticles>()
-                .Init(Mathf.RoundToInt(bulletSurfaceArea / bulletFragmentSurfaceArea));
+                .Init(Mathf.RoundToInt(bulletSurfaceArea / bulletFragmentSurfaceArea), radius * 0.45f);
 
         Destroy(gameObject);
     }

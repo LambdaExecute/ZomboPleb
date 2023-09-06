@@ -14,9 +14,9 @@ public class PlayerUI : Window
         powerScale.fillAmount = 0;
     }
 
-    public void UpdateScale(float currentBulletSize, float currentPlayerSize)
+    public void UpdateScale(float currentBulletMass, float currentPlayerMass)
     {
-        powerScale.fillAmount = currentBulletSize / currentPlayerSize;
+        powerScale.fillAmount = currentBulletMass / currentPlayerMass;
     }
 
     public void UpdatePossibleCountOfShots(int shotsCount)

@@ -14,6 +14,8 @@ public class Zombie : MonoBehaviour
 
     private float currentAnimationSpeed;
     private int currentZombieIndex;
+
+    private string pathToCurrentZombieData;
     
     private Vector3 currentZombieScale;
 
@@ -27,6 +29,7 @@ public class Zombie : MonoBehaviour
 
     public void Init(List<GameObject> zombiesModels, int modelID)
     {
+        pathToCurrentZombieData = $"Prefabs/Zombies/Zombie{modelID}/";
         currentZombieIndex = modelID;
         transform = GetComponent<Transform>();
         List<RuntimeAnimatorController> zombieAnimations = Resources.LoadAll<RuntimeAnimatorController>("Prefabs/ZombieAnimations").ToList();
@@ -131,5 +134,27 @@ public class Zombie : MonoBehaviour
         materials[0] = meshRenderer.materials[0];
         materials[1] = Resources.Load<Material>("Prefabs/ZombieInfectedMaterial");
         meshRenderer.sharedMaterials = materials;
+
+        if(!isDead && lodGroup.GetLODs()[1].renderers[0].isVisible)
+        {
+            BillboardRenderer currentBillboard = GetComponentInChildren<BillboardRenderer>();
+            if (currentBillboard != null)
+            {
+                GameObject infectedBillboard = Instantiate(Resources.Load<GameObject>(pathToCurrentZombieData + "ZombieInfectedBillboard"),
+                                                           currentBillboard.gameObject.transform.position,
+                                                           currentBillboard.gameObject.transform.localRotation);
+
+                infectedBillboard.transform.localScale = currentBillboard.transform.localScale;
+                infectedBillboard.transform.parent = zombieModel.transform; 
+                
+                Destroy(currentBillboard.gameObject);
+                
+                LOD[] lods = lodGroup.GetLODs();
+                lods[1].renderers[0] = infectedBillboard.GetComponent<BillboardRenderer>();
+                
+                lodGroup.SetLODs(lods);
+                lodGroup.RecalculateBounds();
+            }
+        }
     }
 }

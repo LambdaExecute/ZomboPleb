@@ -6,8 +6,6 @@ using UnityEngine.Animations.Rigging;
 
 public class Soldier : MonoBehaviour
 {
-    //[SerializeField] private MultiAimConstraint multiAimConstraint;
-    [Space]
     [Min(40)]
     [SerializeField] private float fov;
     [SerializeField] private float maxDistance;
@@ -15,7 +13,7 @@ public class Soldier : MonoBehaviour
     [SerializeField] private float acceleration;
     [Header("Count of shots per second.")]
     [Min(1)]
-    [SerializeField] private float ShotsPerSec = 1;
+    [SerializeField] private float shotsPerSec = 1;
     [Space]
     [SerializeField] private Transform bulletSpawnPoint;
 
@@ -24,116 +22,79 @@ public class Soldier : MonoBehaviour
     private new Transform transform;
     private Zombie target;
     private Zombie[] nearestZombies;
-    private RigBuilder rigBuilder;
     private GameObject soldierBulletPrefab;
 
     private bool isDead = false;
     private int aimingLayerID = 2;
 
     private bool isTargetInFov => Vector3.Angle(target.transform.position - transform.position, transform.forward) <= fov;
-
-    private Coroutine movementCoroutine;
-    private Coroutine shootMachineCoroutine;
-    private Coroutine shootCoroutine;
+    private bool isMoving;
 
     private void Start()
     {
-        StartCoroutine(IStart());
-    }
-
-    private IEnumerator IStart()
-    {
-        yield return new WaitForSeconds(2f);
         soldierBulletPrefab = Resources.Load<GameObject>("Prefabs/SoldierBullet");
 
-        rigBuilder = GetComponent<RigBuilder>();
         transform = GetComponent<Transform>();
         animator = GetComponent<Animator>();
+    }
 
+    public void StartMoving()
+    {
         zombies = FindObjectsOfType<Zombie>().ToList();
-
-        shootMachineCoroutine = StartCoroutine(IShootMachine());
-        movementCoroutine = StartCoroutine(IMove());
+        StartCoroutine(IShootMachine());
+        StartCoroutine(IMove());
     }
 
     private IEnumerator IMove()
     {
-        while (!isDead)
+        isMoving = true;
+        animator.SetTrigger("Run");
+        transform.rotation = Quaternion.identity;
+        while (isMoving)
         {
-            transform.rotation = Quaternion.identity;
-            animator.SetTrigger("Run");
-            while (true)
-            {
-                yield return null;
-                transform.position += Vector3.forward * acceleration * Time.deltaTime;
-                if(target != null && !target.isDead && Vector3.Distance(transform.position, target.transform.position) <= minDistance)
-                    break;
-            }
-            transform.LookAt(target.transform.position);
-            animator.SetTrigger("Idle");
-            while(true)
-            {
-                yield return new WaitForSecondsRealtime(0.001f);
-                if (target != null && Vector3.Distance(transform.position, target.transform.position) > minDistance)
-                    break;
-                if (nearestZombies.Length <= 0)
-                    break;
-            }
+            yield return null;
+            transform.position += Vector3.forward * acceleration * Time.deltaTime;
         }
+        animator.SetTrigger("Idle");
     }
 
     private IEnumerator IShootMachine()
     {
-        SetAnimationTarget(null);
         while (true)
         {
-            int tryFindTargetCount = 0;
             while (target == null)
             {
-                yield return new WaitForSecondsRealtime(0.001f);
+                yield return null;
                 
                 nearestZombies = zombies.FindAll(z => Vector3.Distance(z.transform.position, transform.position) <= maxDistance && !z.isDead).ToArray();
-                
+
                 if (nearestZombies.Length > 0)
                 {
-                    Zombie nearestZombie = nearestZombies.First();
-                    float minDistance = maxDistance;
-                    foreach(Zombie currentZombie in nearestZombies)
+                    target = GetNearestZombie();
+
+                    if (Vector3.Distance(target.transform.position, transform.position) < minDistance)
                     {
-                        float currentDistance = Vector3.Distance(transform.position, currentZombie.transform.position);
-                        if(currentDistance < minDistance)
-                        {
-                            nearestZombie = currentZombie;
-                            minDistance = currentDistance;
-                        }
+                        isMoving = false;
+                        transform.LookAt(target.transform.position);
                     }
-
-                    SetAnimationTarget(nearestZombie.transform);
-
-                    target = nearestZombie;
-                    tryFindTargetCount++;
-
-                    if(tryFindTargetCount > 5)
+                    else if (isMoving && !isTargetInFov)
                     {
-                        tryFindTargetCount = 0;
-                        zombies.Remove(nearestZombie);
-                    }
-                    if (!isTargetInFov)
-                    {
-                        SetAnimationTarget(null);
+                        zombies.Remove(target);
                         target = null;
                     }
                 }
             }
+            
             for(float i = 0; i <= 1; i += Time.deltaTime * 4)
             {
                 yield return null;
                 animator.SetLayerWeight(aimingLayerID, i);
             }
+            
             animator.SetLayerWeight(aimingLayerID, 1);
-            shootCoroutine = StartCoroutine(IShooting());
+            StartCoroutine(IShooting());
+
             yield return new WaitUntil(() => target == null);
-            StopCoroutine(shootCoroutine);
         }
     }
 
@@ -141,7 +102,7 @@ public class Soldier : MonoBehaviour
     {
         while (target != null)
         {
-            if (target.isDead || !isTargetInFov)
+            if (target.isDead)
             {
                 for (float i = 1; i >= 0; i -= Time.deltaTime * 4)
                 {
@@ -150,30 +111,34 @@ public class Soldier : MonoBehaviour
                 }
                 animator.SetLayerWeight(aimingLayerID, 0);
 
-                SetAnimationTarget(null);
-
                 zombies.Remove(target);
                 target = null;
+                StartCoroutine(IMove());
+
+                break;
             }
 
-            yield return new WaitForSecondsRealtime(1 / ShotsPerSec);
+            yield return new WaitForSecondsRealtime(1 / shotsPerSec);
 
             Instantiate(soldierBulletPrefab, bulletSpawnPoint.position, Quaternion.identity)
-                       .GetComponent<SoldierBullet>()
-                       .Init(target.transform.position - transform.position);
+                   .GetComponent<SoldierBullet>()
+                   .Init(target.transform.position - transform.position);
         }
     }
 
-    private void SetAnimationTarget(Transform target)
+    private Zombie GetNearestZombie()
     {
-        //WeightedTransformArray data = multiAimConstraint.data.sourceObjects;
-        //
-        //if (target != null)
-        //    data.Add(new WeightedTransform(target, 1));
-        //else
-        //    data.Clear();
-        //
-        //multiAimConstraint.data.sourceObjects = data;
-        //rigBuilder.Build();
+        Zombie nearestZombie = nearestZombies.First();
+        float minDistance = maxDistance;
+        foreach (Zombie currentZombie in nearestZombies)
+        {
+            float currentDistance = Vector3.Distance(transform.position, currentZombie.transform.position);
+            if (currentDistance < minDistance)
+            {
+                nearestZombie = currentZombie;
+                minDistance = currentDistance;
+            }
+        }
+        return nearestZombie;
     }
 }

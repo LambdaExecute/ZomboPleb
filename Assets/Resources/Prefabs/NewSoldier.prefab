@@ -1128,7 +1128,7 @@ MonoBehaviour:
   maxDistance: 15
   minDistance: 3
   acceleration: 3
-  ShotsPerSec: 10
+  shotsPerSec: 10
   bulletSpawnPoint: {fileID: 8005741974428138423}
 --- !u!114 &8005741973741508296
 MonoBehaviour:

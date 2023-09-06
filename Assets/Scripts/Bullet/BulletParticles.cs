@@ -6,14 +6,15 @@ public class BulletParticles : MonoBehaviour
 {
     private ParticleSystem particleSystem;
 
-    public void Init(int countOfParticles) 
+    public void Init(int countOfParticles, float particleRadius) 
     {
-        StartCoroutine(IInit(countOfParticles));
+        StartCoroutine(IInit(countOfParticles, particleRadius));
     }
 
-    private IEnumerator IInit(int countOfParticles)
+    private IEnumerator IInit(int countOfParticles, float particleRadius)
     {
         particleSystem = GetComponent<ParticleSystem>();
+        particleSystem.startSize = particleRadius;
         ParticleSystem.Burst burst = particleSystem.emission.GetBurst(0);
         burst.count = countOfParticles;
         particleSystem.emission.SetBurst(0, burst);
