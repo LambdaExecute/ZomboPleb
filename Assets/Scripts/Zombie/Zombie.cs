@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Zombie : MonoBehaviour
+public class Zombie : MonoBehaviour, IMoneyCollectable
 {
     public new Transform transform { get; private set; }
 
     private float health = 100;
     private float minScale = 1.75f;
     private float maxScale = 2.25f;
+    private float price = 1f;
     private Animator zombieAnimator;
 
     private float currentAnimationSpeed;
@@ -95,6 +96,8 @@ public class Zombie : MonoBehaviour
 
     public void Kill(bool isInfected = false)
     {
+        Wallet.instance.Collect(GetPrice());
+
         health = 0;
         
         Destroy(zombieModel);
@@ -158,8 +161,5 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    internal List<Zombie> ToList()
-    {
-        throw new System.NotImplementedException();
-    }
+    public float GetPrice() => price;
 }

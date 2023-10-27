@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levels:
   - zombieFieldDepth: 20
-    zombieDensity: 2
+    zombieDensity: 0.1
     playerMass: 500
     countOfSoldiers: 6
     distanceToZombies: 25

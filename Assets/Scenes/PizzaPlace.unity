@@ -11422,6 +11422,7 @@ MonoBehaviour:
   zombieSpawnField:
     m_Center: {x: 10, y: 2.6, z: 50}
     m_Extent: {x: 15, y: 2.5, z: 10}
+  defaultStep: 1.5
 --- !u!1 &1137093164
 GameObject:
   m_ObjectHideFlags: 0
